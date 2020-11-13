@@ -1,23 +1,40 @@
-import logo from './logo.svg';
+import React, { useEffect, useState, } from 'react';
 import './App.css';
 
+const authkey = 'OEIDkG6msYquVZXRoO4v24mfhCwNPzZ9'
+
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  const [data, setData] = useState([]);
+
+  useEffect(async() => {
+    fetch(
+      `https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=${authkey}&searchdate=${'2020-11-11'}&data=${'AP01'}`)
+    .then(
+      response=>{
+        return response.json()
+      }
+    ).then(
+      responseJSON => {
+        console.log('responseJSON: ', responseJSON);
+        setData(responseJSON)
+      }
+    )
+  }, []);
+
+  useEffect(()=>{
+    console.log('data: ', data);
+  }, [data]);
+  
+  return(
+    <div>
+      {data.map((currency, cI) => {
+        return (
+          <div key={cI}>
+            {currency.cur_nm} ({currency.cur_unit}): {currency.bkpr}
+          </div>
+        );
+
+      })}
     </div>
   );
 }
